@@ -2,16 +2,21 @@ import React, {useState} from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import uuid from 'uuid/v4';
 
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Collapse from '@material-ui/core/Collapse';
+import Typography from '@material-ui/core/Typography';
+
 const itemsFromBackend = [
-  {id: uuid(), content: 'First task'},
-  {id: uuid(), content: 'Second task'},
-    { id: uuid(), content: "Third task" },
-    { id: uuid(), content: "Fourth task" },
-    { id: uuid(), content: "Fifth task" }
+  {id: uuid(), content: 'First task', description: 'HEllO'},
+  {id: uuid(), content: 'Second task', description: 'HEllO'},
+    { id: uuid(), content: "Third task", description: 'HEllO'},
+    { id: uuid(), content: "Fourth task", description: 'HEllO' },
+    { id: uuid(), content: "Fifth task", description: 'HEllO' }
 ];
 
 const columnsFromBackend =
-  {
+    {
       [uuid()]: {
           name: 'Requested',
           items: [],
@@ -66,9 +71,11 @@ const onDragEnd = (result, columns, setColumns) => {
   }
 };
 
+
 function App() {
   const[columns, setColumns] = useState(columnsFromBackend);
-
+  const [expanded, setExpanded] = React.useState(false);
+  const handleExpandClick = () => { setExpanded(!expanded);};
   return (
     <div style={{display: 'flex', justifyContent: 'center', height: '100%'}}>
       <DragDropContext onDragEnd={result => onDragEnd(result, columns, setColumns)}>
@@ -92,25 +99,38 @@ function App() {
                     >
                       {column.items.map((item, index) => {
                         return(
-                          <Draggable key={item.id} draggableId={item.id} index={index}>
+                          <Draggable key={item.id} draggableId={item.id} index={index} onClick={handleExpandClick}>
                             {(provided, snapshot) => {
                               return (
-                                  <div
-                                      ref={provided.innerRef}
-                                      {...provided.draggableProps}
-                                      {...provided.dragHandleProps}
-                                      style={{
-                                        userSelect: 'none',
-                                        padding: 16,
-                                        margin: '0 0 8px 0',
-                                        minHeight: '50px',
-                                        backgroundColor: snapshot.isDragging ? '#263B4A' : '#456C86',
-                                        color: 'white',
-                                        ...provided.draggableProps.style
-                                      }}
-                                  >
-                                    {item.content}
-                                  </div>
+
+
+                                      <Card  onClick={handleExpandClick} ref={provided.innerRef}
+                                             {...provided.draggableProps}
+                                             {...provided.dragHandleProps}
+                                             style={{
+                                                 userSelect: 'none',
+                                                 padding: 16,
+                                                 margin: '0 0 8px 0',
+                                                 minHeight: '50px',
+                                                 backgroundColor: snapshot.isDragging ? '#263B4A' : '#456C86',
+                                                 color: 'white',
+                                                 ...provided.draggableProps.style
+                                             }}>
+                                          <CardContent>
+                                              <Typography>
+                                                  Task1
+                                              </Typography>
+                                          </CardContent>
+                                          <Collapse in={expanded} timeout="auto" unmountOnExit>
+                                              <CardContent>
+                                                  <Typography paragraph>
+                                                      Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
+                                                      minutes.
+                                                  </Typography>
+                                              </CardContent>
+                                          </Collapse>
+                                      </Card>
+
                               );
                             }}
                           </Draggable>
