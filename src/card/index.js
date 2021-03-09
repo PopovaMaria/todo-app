@@ -1,3 +1,3 @@
-import Card from "./card"
+import Editable from "./card"
 
 export default Card

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { anyPass, isEmpty, isNil } from "ramda";
-import Radium from "radium";
 import { generate } from "short-id";
 
 
@@ -22,55 +21,33 @@ class EditableLabel extends Component {
     const { editChangeEvent } = this.props;
 
     if (isEditing === true) {
-
-
-
       if (editChangeEvent) {
         this.setState({ isEditing: false });
         editChangeEvent(previewLabel);
       }
-
       return;
     }
 
     this.setState({ isEditing: true });
   };
 
-  cancelEditMode = () => {
-    const { labelValue } = this.props;
-    this.setState({
-      isEditing: false,
-      previewLabel: labelValue,
-      hasError: false
-    });
-  };
 
   simpleLabelWithClickAction = () => {
     const {
       labelValue,
       placeholder,
-      customEditIcon,
     } = this.props;
 
     const showPlaceholder = isEmptyOrNil(labelValue);
     const showableLabel = showPlaceholder ? placeholder : labelValue;
-    const isHovering = Radium.getState(this.state, "label-value", ":hover");
-
-
-
-    const editIcon = (
-      <span >
-        {customEditIcon}
-      </span>
-    );
 
     return (
       <p key="label-value"  onClick={this.toggleEditMode}>
         {showableLabel}
-        {isHovering && editIcon}
       </p>
     );
   };
+
 
   watchForEnterClick = event => {
     if (event.keyCode === 13) {
@@ -80,6 +57,7 @@ class EditableLabel extends Component {
       }
     }
   };
+
 
   inputOnChangeEvent = event => {
     const previewLabel = event.target.value;
@@ -95,10 +73,9 @@ class EditableLabel extends Component {
     this.setState({ previewLabel });
   };
 
+
   inputToEditLabel = () => {
     const { previewLabel } = this.state;
-
-
     return [
       <input
         type="text"
@@ -112,12 +89,11 @@ class EditableLabel extends Component {
     ];
   };
 
+
   getErrorMessage = () => {
     const { hasError } = this.state;
     const { hideErrors, customErrorMessage} = this.props;
     const showErrors = !hideErrors && hasError;
-
-
     if (showErrors && Array.isArray(customErrorMessage)) {
       return (
         <ul >
@@ -134,6 +110,7 @@ class EditableLabel extends Component {
 
     return null;
   };
+
 
   render() {
     const { id, isEditing, uniqueId} = this.state;
@@ -159,4 +136,4 @@ const isEmptyOrNil = anyPass([isEmpty, isNil]);
 
 
 
-export default Radium(EditableLabel);
+export default EditableLabel;
