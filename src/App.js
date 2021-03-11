@@ -1,30 +1,28 @@
-import React from "react";
-import EditableLabel from "./card/editable_label";
+import React, {useState, useRef} from "react";
+import Editable from "./card/editable_label";
 
-export default class App extends React.Component {
+function App() {
 
-  constructor(props) {
-    super(props);
-    this.props = props;
-    this.state = {
-      labelToEdit: "Editable label"
-    }
-  }
+  const [task, setTask] = useState("");
+  const inputRef = useRef();
 
-  changeLabelEvent = label => {
-    this.setState({labelToEdit: label})
-  }
-
-  render() {
-    return(
-      <div>
-        <EditableLabel
-          labelValue={this.state.labelToEdit}
-          editChangeEvent={this.changeLabelEvent}
-        />
-      </div>
-    )
-  }
+  return (
+    <Editable
+      text={task}
+      placeholder="Description for the task"
+      childRef={inputRef}
+      type="textarea"
+    >
+  <textarea
+    name="description"
+    placeholder="Description for the task"
+    rows="5"
+    value={task}
+    ref={inputRef}
+    onChange={e => setTask(e.target.value)}
+  />
+    </Editable>
+  );
 }
 
-
+export default App;

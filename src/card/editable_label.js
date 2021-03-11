@@ -1,139 +1,54 @@
-import React, { Component } from "react";
-import { anyPass, isEmpty, isNil } from "ramda";
-import { generate } from "short-id";
+import React, {useEffect, useState} from "react";
 
 
-class EditableLabel extends Component {
-  constructor(props) {
-    super(props);
-    this.props = props;
+const Editable = ({
+  text,
+  type,
+  placeholder,
+  children,
+  childRef,
+  ...props
+  }) => {
+  const [isEditing, setEditing] = useState(false);
 
-    this.state = {
-      uniqueId: generate(),
-      isEditing: false,
-      hasError: false,
-      previewLabel: this.props.labelValue
-    };
+  useEffect(() => {
+    if (childRef && childRef.current && isEditing === true) {
+      childRef.current.focus();
+    }
+  }, [isEditing, childRef]);
+
+  const handleKeyDown = (event, type) => {
+    const { key } = event;
+    const keys = ["Escape", "Tab"];
+    const enterKey = "Enter";
+    const allKeys = [...keys, enterKey];
+
+    if (
+      ( type == "textarea" && keys.indexOf(key)) > -1 ||
+      ( type !== "textarea" && allKeys.indexOf(key) > -1)
+    ) {
+      setEditing(false);
+    }
+
   }
 
-  toggleEditMode = () => {
-    const { isEditing, previewLabel } = this.state;
-    const { editChangeEvent } = this.props;
+  return (
+    <section {...props}>
+      {isEditing ? (
+        <div
+          onBlur={() => setEditing(false)}
+          onKeyDown={e => handleKeyDown(e, type)}
+          >
+          {children}
+        </div>
+      ) :
+      <div onDoubleClick={() => setEditing(true)}>
+        <span>
+          {text || placeholder || "Editable content"}
+        </span>
+      </div>}
+    </section>
+  );
+};
 
-    if (isEditing === true) {
-      if (editChangeEvent) {
-        this.setState({ isEditing: false });
-        editChangeEvent(previewLabel);
-      }
-      return;
-    }
-
-    this.setState({ isEditing: true });
-  };
-
-
-  simpleLabelWithClickAction = () => {
-    const {
-      labelValue,
-      placeholder,
-    } = this.props;
-
-    const showPlaceholder = isEmptyOrNil(labelValue);
-    const showableLabel = showPlaceholder ? placeholder : labelValue;
-
-    return (
-      <p key="label-value"  onClick={this.toggleEditMode}>
-        {showableLabel}
-      </p>
-    );
-  };
-
-
-  watchForEnterClick = event => {
-    if (event.keyCode === 13) {
-      const { hasError } = this.state;
-      if (!hasError) {
-        this.toggleEditMode();
-      }
-    }
-  };
-
-
-  inputOnChangeEvent = event => {
-    const previewLabel = event.target.value;
-
-    if (previewLabel.length > 0) {
-      this.setState({
-        hasError: false,
-        previewLabel
-      });
-      return;
-    }
-
-    this.setState({ previewLabel });
-  };
-
-
-  inputToEditLabel = () => {
-    const { previewLabel } = this.state;
-    return [
-      <input
-        type="text"
-        value={previewLabel}
-        key="input-value-label"
-        onChange={this.inputOnChangeEvent}
-        onKeyUp={this.watchForEnterClick}
-        autoFocus
-      />,
-
-    ];
-  };
-
-
-  getErrorMessage = () => {
-    const { hasError } = this.state;
-    const { hideErrors, customErrorMessage} = this.props;
-    const showErrors = !hideErrors && hasError;
-    if (showErrors && Array.isArray(customErrorMessage)) {
-      return (
-        <ul >
-          {customErrorMessage.map(error => (
-            <li key={generate()}>{error}</li>
-          ))}
-        </ul>
-      );
-    }
-
-    if (showErrors) {
-      return <span >{customErrorMessage}</span>;
-    }
-
-    return null;
-  };
-
-
-  render() {
-    const { id, isEditing, uniqueId} = this.state;
-
-    const showThisComponent = isEditing
-      ? this.inputToEditLabel()
-      : this.simpleLabelWithClickAction();
-    const error = this.getErrorMessage();
-    const componentId = isEmptyOrNil(id) ? `editable-label-id-${uniqueId}` : id;
-
-    return (
-      <div id={componentId} key={componentId} >
-        {showThisComponent}
-        {error}
-      </div>
-    );
-  }
-}
-
-const isEmptyOrNil = anyPass([isEmpty, isNil]);
-
-
-
-
-
-export default EditableLabel;
+export default Editable;
