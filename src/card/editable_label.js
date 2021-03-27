@@ -24,7 +24,7 @@ const Editable = ({
     const allKeys = [...keys, enterKey];
 
     if (
-      ( type == "textarea" && keys.indexOf(key)) > -1 ||
+      ( type === "textarea" && keys.indexOf(key)) > -1 ||
       ( type !== "textarea" && allKeys.indexOf(key) > -1)
     ) {
       setEditing(false);
@@ -52,3 +52,6 @@ const Editable = ({
 };
 
 export default Editable;
+
+
+

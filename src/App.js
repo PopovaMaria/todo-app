@@ -1,5 +1,6 @@
 import React, {useState, useRef} from "react";
 import Editable from "./card/editable_label";
+import Columns from "./columns_page";
 
 function App() {
 
@@ -7,22 +8,11 @@ function App() {
   const inputRef = useRef();
 
   return (
-    <Editable
-      text={task}
-      placeholder="Description for the task"
-      childRef={inputRef}
-      type="textarea"
-    >
-  <textarea
-    name="description"
-    placeholder="Description for the task"
-    rows="5"
-    value={task}
-    ref={inputRef}
-    onChange={e => setTask(e.target.value)}
-  />
-    </Editable>
+    <Columns>
+      </Columns>
   );
 }
 
 export default App;
+
+
